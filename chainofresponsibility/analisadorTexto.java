@@ -21,8 +21,6 @@ public class AnalisadorTexto {
                 textoEntrada = lerArquivo(primeiroArgumento);
             } catch (IOException e) {
                 System.err.println("Erro ao tentar ler o arquivo '" + primeiroArgumento + "'.");
-                System.err.println("Verifique se o nome está correto e se você tem permissão para lê-lo.");
-                System.err.println("Detalhe do erro: " + e.getMessage());
                 return;
             }
         } else {
@@ -37,17 +35,14 @@ public class AnalisadorTexto {
             textoEntrada = construtorTexto.toString();
         }
 
-        if (textoEntrada.isEmpty() && args.length > 0) {
-             System.out.println("O texto de entrada (ou conteúdo do arquivo) está vazio.");
-        } else if (textoEntrada.isEmpty()) {
+        if (textoEntrada.isEmpty()) {
              System.out.println("Nenhum texto fornecido para análise.");
              return;
         }
 
-
         System.out.println("\nTexto para analisar:\n\"" + textoEntrada + "\"\n");
 
-        Estatisticas estatisticas = new Estatisticas();
+        Contagem contagem = new Contagem();
 
         ProcessadorCaractere processadorEspaco = new ProcessadorEspaco();
         ProcessadorCaractere processadorLetraA = new ProcessadorLetraA();
@@ -55,13 +50,14 @@ public class AnalisadorTexto {
 
         processadorEspaco.definirProximo(processadorLetraA);
         processadorLetraA.definirProximo(processadorPonto);
+        
         ProcessadorCaractere primeiroEloDaCorrente = processadorEspaco;
 
         for (char caractereIndividual : textoEntrada.toCharArray()) {
-            primeiroEloDaCorrente.processar(caractereIndividual, estatisticas);
+            primeiroEloDaCorrente.processar(caractereIndividual, contagem);
         }
 
-        System.out.println(estatisticas.toString());
+        System.out.println(contagem.toString());
     }
 
     private static String lerArquivo(String caminhoArquivo) throws IOException {
